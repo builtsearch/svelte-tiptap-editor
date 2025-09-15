@@ -1,6 +1,8 @@
 {
 	"name": "svelte-tiptap",
 	"version": "0.0.1",
+	"author": "merhmerh",
+	"license": "MIT",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run prepack",
