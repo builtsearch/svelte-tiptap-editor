@@ -322,7 +322,7 @@ export function replaceImages(arr) {
 <div
 	class="tiptap-svelte-container"
 	style="--tiptap-width: {width};
-	--tiptap-height: {height ? height : 'auto'};">
+	--tiptap-height: {height ? height : '100%'};">
 	{#if editor}
 		<Toolbar {editor} />
 	{/if}
@@ -350,17 +350,19 @@ export function replaceImages(arr) {
 	width: auto;
 	display: flex;
 	flex-direction: column;
-	gap: 0;
+	gap: 0.5rem;
 	position: relative;
-	// gap: 1rem;
 	.tiptap-editor {
+		height: 100%;
 		overflow: auto;
 		.scrollable {
-			margin-block: 1rem;
+			padding-block: 1rem;
 			margin-inline: auto;
 			width: var(--tiptap-width, 600px);
-			// height: calc(100dvh - 150px);
-			height: var(--tiptap-height, auto);
+			height: var(--tiptap-height);
+			.editor-area {
+				height: 100%;
+			}
 		}
 	}
 	.debug {

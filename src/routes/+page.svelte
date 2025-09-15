@@ -26,7 +26,7 @@ function save() {
 	}}>Replace</button>
 
 <main>
-	<Tiptap {content} bind:this={tiptap} width="600" />
+	<Tiptap {content} width="600" bind:this={tiptap} />
 </main>
 
 <style lang="scss">
@@ -34,5 +34,6 @@ main {
 	width: 100%;
 	display: flex;
 	justify-content: center;
+	height: 600px;
 }
 </style>

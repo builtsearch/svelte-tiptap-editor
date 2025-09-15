@@ -4,22 +4,13 @@
 
 	--c-grey: #8f9092;
 	--c-red: #de5945;
-	--c-pink: #ff6f91;
-	--c-rose: #d69c9c;
 	--c-yellow: #edae1b;
-	--c-lime: #a4d65e;
 	--c-green: #509411;
-	--c-emerald: #00644d;
-	--c-teal: #2ed8b6;
-	--c-cyan: #00b6db;
-	--c-blue: #427cd8;
-	--c-violet: #c99af7;
 	--c-purple: #663399;
 
 	--shadow: 0px 12px 33px 0px rgba(0, 0, 0, 0.06), 0px 3.618px 9.949px 0px rgba(0, 0, 0, 0.04);
 
 	--code-block-bg: hsl(218, 50%, 97%);
-	// --code-block-header-bg: hsl(218, 15%, 80%);
 	--code-var: #a626a4;
 }
 
@@ -60,9 +51,8 @@
 	&:focus-visible {
 		outline: none;
 	}
-
-	// width: 100%;
-	border: 1px solid var(--mono-light);
+	height: 100%;
+	border: none;
 	border-radius: 0.5rem;
 	padding: 0.5rem;
 	:first-child {
