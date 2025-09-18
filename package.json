@@ -32,8 +32,8 @@
 		}
 	},
 	"peerDependencies": {
-		"svelte": "^5.0.0",
-		"sass": "^1.92.1"
+		"sass": "^1.92.1",
+		"svelte": "^5.0.0"
 	},
 	"dependencies": {
 		"@iconify/svelte": "^5.0.1",
@@ -49,6 +49,7 @@
 		"@tiptap/extension-table": "^3.4.2",
 		"@tiptap/extension-text-align": "^3.4.2",
 		"@tiptap/extension-underline": "^3.4.2",
+		"@tiptap/extension-unique-id": "^3.4.4",
 		"@tiptap/extensions": "^3.4.2",
 		"@tiptap/pm": "^3.4.2",
 		"@tiptap/starter-kit": "^3.4.2",

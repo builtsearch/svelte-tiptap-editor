@@ -8,10 +8,14 @@ import ToolbarItemDropdown from "./ToolbarItemDropdown.svelte";
 import { activeOptions } from "./Toolbar.svelte.js";
 import LinkEditor from "./LinkEditor.svelte";
 import ToolbarImage from "./ToolbarImage.svelte";
+import { getTipTapState } from "./TiptapState.svelte.js";
 
-let { editor } = $props();
+// let { editor } = $props();
+const tts = getTipTapState();
 
-editor.on("transaction", debounce(updateHandler, 100));
+tts.on("transaction", () => {
+	debounce(updateHandler, 100)();
+});
 
 function updateHandler() {
 	const keys = [
@@ -41,9 +45,9 @@ function updateHandler() {
 
 		let isActive = false;
 		if (Array.isArray(check)) {
-			isActive = editor.isActive(...check);
+			isActive = tts.editor.isActive(...check);
 		} else {
-			isActive = editor.isActive(check);
+			isActive = tts.editor.isActive(check);
 		}
 
 		if (isActive) {
@@ -58,19 +62,19 @@ const headings = [
 	{
 		name: "Heading 1",
 		key: "heading1",
-		fn: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
+		fn: () => tts.editor.chain().focus().toggleHeading({ level: 1 }).run(),
 		icon: "lucide:heading-1",
 	},
 	{
 		name: "Heading 2",
 		key: "heading2",
-		fn: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
+		fn: () => tts.editor.chain().focus().toggleHeading({ level: 2 }).run(),
 		icon: "lucide:heading-2",
 	},
 	{
 		name: "Heading 3",
 		key: "heading3",
-		fn: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
+		fn: () => tts.editor.chain().focus().toggleHeading({ level: 3 }).run(),
 		icon: "lucide:heading-3",
 	},
 ];
@@ -78,28 +82,28 @@ const formatting = [
 	{
 		name: "Bold",
 		key: "bold",
-		fn: () => editor.chain().focus().toggleBold().run(),
+		fn: () => tts.editor.chain().focus().toggleBold().run(),
 		icon: "lucide:bold",
 		tooltip: "Bold",
 		kbd: ["Ctrl", "B"],
 	},
 	{
 		name: "underline",
-		fn: () => editor.chain().focus().toggleUnderline().run(),
+		fn: () => tts.editor.chain().focus().toggleUnderline().run(),
 		icon: "lucide:underline",
 		tooltip: "Underline",
 		kbd: ["Ctrl", "U"],
 	},
 	{
 		name: "italic",
-		fn: () => editor.chain().focus().toggleItalic().run(),
+		fn: () => tts.editor.chain().focus().toggleItalic().run(),
 		icon: "lucide:italic",
 		kbd: ["Ctrl", "I"],
 	},
 	{
 		name: "Strike ",
 		key: "strike",
-		fn: () => editor.chain().focus().toggleStrike().run(),
+		fn: () => tts.editor.chain().focus().toggleStrike().run(),
 		icon: "lucide:strikethrough",
 		kbd: ["Ctrl", "Shift", "S"],
 	},
@@ -107,10 +111,10 @@ const formatting = [
 		name: "Code",
 		key: "code",
 		fn: () => {
-			if (editor.isActive("code")) {
-				editor.chain().focus().unsetCode().run();
+			if (tts.editor.isActive("code")) {
+				tts.editor.chain().focus().unsetCode().run();
 			} else {
-				editor.chain().focus().setCode().run();
+				tts.editor.chain().focus().setCode().run();
 			}
 		},
 		icon: "lucide:code-xml",
@@ -120,12 +124,12 @@ const formatting = [
 const typography = [
 	{
 		name: "Subscript",
-		fn: () => editor.chain().focus().toggleSubscript().run(),
+		fn: () => tts.editor.chain().focus().toggleSubscript().run(),
 		icon: "lucide:subscript",
 	},
 	{
 		name: "Superscript",
-		fn: () => editor.chain().focus().toggleSuperscript().run(),
+		fn: () => tts.editor.chain().focus().toggleSuperscript().run(),
 		icon: "lucide:superscript",
 	},
 ];
@@ -134,28 +138,28 @@ const nodes = [
 	{
 		name: "Bullet List",
 		key: "bullet",
-		fn: () => editor.chain().focus().toggleBulletList().run(),
+		fn: () => tts.editor.chain().focus().toggleBulletList().run(),
 		icon: "lucide:list",
 		kbd: ["Ctrl", "Shift", "8"],
 	},
 	{
 		name: "Ordered List",
 		key: "ordered",
-		fn: () => editor.chain().focus().toggleOrderedList().run(),
+		fn: () => tts.editor.chain().focus().toggleOrderedList().run(),
 		icon: "lucide:list-ordered",
 		kbd: ["Ctrl", "Shift", "7"],
 	},
 	{
 		name: "Blockquote",
 		key: "blockquote",
-		fn: () => editor.chain().focus().toggleBlockquote().run(),
+		fn: () => tts.editor.chain().focus().toggleBlockquote().run(),
 		icon: "tabler:align-left-2",
 		kbd: ["Ctrl", "Shift", "B"],
 	},
 	{
 		name: "Code Block",
 		key: "codeBlock",
-		fn: () => editor.chain().focus().toggleCodeBlock().run(),
+		fn: () => tts.editor.chain().focus().toggleCodeBlock().run(),
 		icon: "mdi:code-block-tags",
 		kbd: ["Ctrl", "Alt", "C"],
 	},
@@ -192,27 +196,29 @@ const link = {
 };
 
 function toggleAlignment(align) {
-	if (editor.isActive({ textAlign: align })) {
-		editor.chain().focus().unsetTextAlign().run();
+	if (tts.editor.isActive({ textAlign: align })) {
+		tts.editor.chain().focus().unsetTextAlign().run();
 	} else {
-		editor.chain().focus().setTextAlign(align).run();
+		tts.editor.chain().focus().setTextAlign(align).run();
 	}
 }
 </script>
 
-<div class="toolbar">
-	<ToolbarItemDropdown tools={headings} />
-	{@render Tools(nodes)}
-	<div class="vertical-divider"></div>
-	{@render Tools(formatting)}
-	<LinkEditor {link} {editor} />
-	<div class="vertical-divider"></div>
-	{@render Tools(typography)}
-	<div class="vertical-divider"></div>
-	{@render Tools(alignment)}
-	<div class="vertical-divider"></div>
-	<ToolbarImage {editor} />
-</div>
+{#if tts?.editor}
+	<div class="toolbar">
+		<ToolbarItemDropdown tools={headings} />
+		{@render Tools(nodes)}
+		<div class="vertical-divider"></div>
+		{@render Tools(formatting)}
+		<LinkEditor {link} editor={tts.editor} />
+		<div class="vertical-divider"></div>
+		{@render Tools(typography)}
+		<div class="vertical-divider"></div>
+		{@render Tools(alignment)}
+		<div class="vertical-divider"></div>
+		<ToolbarImage editor={tts.editor} />
+	</div>
+{/if}
 
 {#snippet Tools(tools)}
 	{#each tools as t}
@@ -229,7 +235,6 @@ function toggleAlignment(align) {
 .toolbar {
 	display: flex;
 	justify-content: center;
-	border-bottom: 1px solid var(--tt-border);
 	padding-block: 0.5rem;
 	gap: 0.25rem;
 }

@@ -1,4 +1,4 @@
-.tiptap-svelte-container {
+.tiptap {
 	--tt-border: var(--border, #e6e2e0);
 	--tt-button-hover: color-mix(in srgb, var(--mono) 16%, var(--bg-100));
 
@@ -48,13 +48,19 @@
 }
 
 .tiptap {
+	p.is-editor-empty:first-child::before {
+		color: #adb5bd;
+		content: attr(data-placeholder);
+		float: left;
+		height: 0;
+		pointer-events: none;
+	}
 	&:focus-visible {
 		outline: none;
 	}
 	height: 100%;
 	border: none;
 	border-radius: 0.5rem;
-	padding: 0.5rem;
 	:first-child {
 		margin-top: 0;
 	}
@@ -351,10 +357,12 @@
 				display: none;
 			}
 			kbd {
+				background-color: transparent;
 				opacity: 0.75;
 				line-height: normal;
 				font-size: 0.75rem;
 				font-weight: 400;
+				color: inherit;
 				border: 1px solid color-mix(in srgb, var(--border), 75% transparent);
 				border-radius: 0.25rem;
 				padding-inline: 2px;

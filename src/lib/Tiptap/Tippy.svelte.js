@@ -5,7 +5,6 @@ export function tippyTooltip(
 	content,
 	{
 		allowHtml = false,
-		target = null,
 		click = false,
 		delay = 0,
 		kbd = null,
@@ -43,7 +42,9 @@ export function tippyTooltip(
 		const tooltip = tippy(element, {
 			content,
 			maxWidth,
+			arrow: false,
 			theme: "light",
+			placement: "bottom",
 			delay: [delay, 0],
 			animation: "shift-away",
 			allowHTML: allowHtml,

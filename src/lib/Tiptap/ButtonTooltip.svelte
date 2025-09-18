@@ -39,7 +39,7 @@ button.toolbar-button {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	color: color-mix(in srgb, var(--mono), 40% #000);
+	color: var(--tt-icon-button, color-mix(in srgb, var(--mono), 40% #000));
 	&.active {
 		color: var(--primary);
 	}

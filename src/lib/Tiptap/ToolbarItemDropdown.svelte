@@ -90,7 +90,7 @@ button {
 	width: 100%;
 	border-radius: 0.5rem;
 	.icon {
-		color: color-mix(in srgb, var(--mono), 40% #000);
+		color: var(--tt-icon-button, color-mix(in srgb, var(--mono), 40% #000));
 	}
 	span {
 		color: var(--text-soft);

@@ -33,6 +33,9 @@
 	--border-mid: color-mix(in oklab, var(--mono) 60%, var(--bg-100));
 
 	--text-soft: color-mix(in oklab, var(--text) 80%, var(--bg-100));
+
+	--tt-button-hover: color-mix(in srgb, var(--mono) 10%, var(--bg-100));
+	--tt-border: var(--border);
 }
 
 * {

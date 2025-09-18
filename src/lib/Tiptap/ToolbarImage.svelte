@@ -43,11 +43,7 @@ function browseImage(e) {
 			reader.onload = () => {
 				const base64 = reader.result;
 				// Insert the image at the current cursor position
-				editor
-					.chain()
-					.focus()
-					.setImage({ src: base64, id: fastRandom(8, "tt-img-") })
-					.run();
+				editor.chain().focus().setImage({ src: base64 }).run();
 			};
 			reader.readAsDataURL(file);
 		}
@@ -64,26 +60,38 @@ onMount(() => {
 	editor.on("selectionUpdate", () => {
 		if (editor.isActive("image")) {
 			const img = editor.view.dom.querySelector("img.ProseMirror-selectednode");
-
 			if (img) {
-				showEditor = true;
-				const width = img.naturalWidth;
-				const height = img.naturalHeight;
-				editImageFields.originalWidth = width;
-				editImageFields.originalHeight = height;
-
-				const currentWidth = img.getAttribute("width") || width;
-				const currentHeight = img.getAttribute("height") || height;
-
-				editImageFields.width = currentWidth;
-				editImageFields.height = currentHeight;
+				if (img.complete) {
+					setImageFields(img);
+				} else {
+					img.addEventListener(
+						"load",
+						() => {
+							setImageFields(img);
+						},
+						{ once: true },
+					);
+				}
 			}
 		} else {
 			showEditor = false;
 		}
 	});
-});
 
+	function setImageFields(img) {
+		showEditor = true;
+		const width = img.naturalWidth;
+		const height = img.naturalHeight;
+		editImageFields.originalWidth = width;
+		editImageFields.originalHeight = height;
+
+		const currentWidth = img.getAttribute("width") || width;
+		const currentHeight = img.getAttribute("height") || height;
+
+		editImageFields.width = currentWidth;
+		editImageFields.height = currentHeight;
+	}
+});
 function updateImage(dim) {
 	const ratio = editImageFields.originalWidth / editImageFields.originalHeight;
 	if (editImageFields.constraint) {
@@ -138,6 +146,7 @@ function reset() {
 		const target = e.target;
 		if (!target.closest("img")) {
 			lastSelectedImage = null;
+			showEditor = false;
 			return;
 		}
 		if (target == lastSelectedImage) {
@@ -145,6 +154,12 @@ function reset() {
 		} else {
 			showEditor = true;
 			lastSelectedImage = target;
+		}
+	}}
+	onkeydown={(e) => {
+		if (showEditor && e.key === "Escape") {
+			console.log("??");
+			showEditor = false;
 		}
 	}} />
 
@@ -284,8 +299,10 @@ function reset() {
 			}
 			input {
 				border: 0;
+				padding: 0;
 				width: 100%;
 				outline: none;
+				border-radius: 0;
 			}
 		}
 	}
