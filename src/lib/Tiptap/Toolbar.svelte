@@ -13,9 +13,7 @@ import { getTipTapState } from "./TiptapState.svelte.js";
 // let { editor } = $props();
 const tts = getTipTapState();
 
-tts.on("transaction", () => {
-	debounce(updateHandler, 100)();
-});
+tts.on("transaction", debounce(updateHandler, 100));
 
 function updateHandler() {
 	const keys = [

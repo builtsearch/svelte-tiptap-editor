@@ -2,12 +2,11 @@
 import Tiptap from "./Tiptap.svelte";
 import { setTipTapState } from "./TiptapState.svelte.js";
 import Toolbar from "./Toolbar.svelte";
-import { onMount } from "svelte";
 
+let { onReady = () => {} } = $props();
 const tts = setTipTapState();
 
 tts.replaceImage();
-// /** @returns {import('./TiptapState.svelte.js').TipTapState} */
 export function getState() {
 	return tts;
 }
@@ -18,7 +17,7 @@ export function getState() {
 		<Toolbar />
 	</div>
 	<div class="tiptap-content">
-		<Tiptap onReady={() => console.log("Editor initialized")} />
+		<Tiptap onReady={() => onReady()} />
 	</div>
 </div>
 

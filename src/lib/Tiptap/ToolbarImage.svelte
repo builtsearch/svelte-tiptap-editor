@@ -144,6 +144,10 @@ function reset() {
 <svelte:window
 	onclick={(e) => {
 		const target = e.target;
+		if (e.target.closest(".tt-toolbar-options")) {
+			return;
+		}
+
 		if (!target.closest("img")) {
 			lastSelectedImage = null;
 			showEditor = false;

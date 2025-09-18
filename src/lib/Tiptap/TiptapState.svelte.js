@@ -39,7 +39,7 @@ export class TipTapState {
 	 * - 'base64': return only images whose src is a base64 data URL
 	 * - function: return images for which the predicate returns true
 	 * @param {('base64' | ((src: string) => boolean))=} option
-	 * @returns {ImageAttrs[] | ErrorResult} Array of image attributes or error object
+	 * @returns {ImageAttrs[] | ErrorResult} Array of image attributes or error objectw
 	 */
 	getImages(option) {
 		if (!this.editor) return { error: "Editor not initialized" };

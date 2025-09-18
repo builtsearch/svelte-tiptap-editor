@@ -201,6 +201,7 @@ onMount(async () => {
 	});
 
 	await tick();
+	tts.init();
 	onReady();
 });
 

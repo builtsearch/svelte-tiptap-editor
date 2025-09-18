@@ -1,8 +1,14 @@
 <script>
 import "./main.scss";
 import TiptapEditor from "$lib/Tiptap/TiptapEditor.svelte";
-
+import { onMount } from "svelte";
+import content from "../lib/data/content.html?raw";
 let tiptapEditor = $state(null);
+
+function init() {
+	const tts = tiptapEditor.getState();
+	tts.editor.commands.setContent(content);
+}
 
 function test() {
 	const tts = tiptapEditor.getState();
@@ -13,7 +19,7 @@ function test() {
 
 <button onclick={test}>test</button>
 <main>
-	<TiptapEditor bind:this={tiptapEditor} />
+	<TiptapEditor onReady={() => init()} bind:this={tiptapEditor} />
 </main>
 
 <style lang="scss">
