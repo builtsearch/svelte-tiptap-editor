@@ -128,6 +128,7 @@ onMount(async () => {
 					};
 				},
 			}),
+
 			Superscript,
 			Subscript,
 			CodeBlockLowlight.configure({
@@ -195,6 +196,53 @@ onMount(async () => {
 				blur: () => {
 					return true; // stop default blur handling
 				},
+			},
+			handlePaste(view, event) {
+				const { schema } = view.state;
+
+				// case 1: raw image file from clipboard
+				const items = event.clipboardData?.items || [];
+				for (let i = 0; i < items.length; i++) {
+					const item = items[i];
+					if (item.kind === "file" && item.type.startsWith("image/")) {
+						const file = item.getAsFile();
+						const reader = new FileReader();
+						reader.onload = () => {
+							view.dispatch(
+								view.state.tr.replaceSelectionWith(
+									schema.nodes.image.create({ src: reader.result }),
+								),
+							);
+						};
+						reader.readAsDataURL(file);
+						return true;
+					}
+				}
+
+				// case 2: copied <img src="http...">
+				const html = event.clipboardData?.getData("text/html");
+				if (html) {
+					const doc = new DOMParser().parseFromString(html, "text/html");
+					const img = doc.querySelector("img");
+					if (img && img.src.startsWith("http")) {
+						fetch(img.src)
+							.then((res) => res.blob())
+							.then((blob) => {
+								const reader = new FileReader();
+								reader.onload = () => {
+									view.dispatch(
+										view.state.tr.replaceSelectionWith(
+											schema.nodes.image.create({ src: reader.result }),
+										),
+									);
+								};
+								reader.readAsDataURL(blob);
+							});
+						return true;
+					}
+				}
+
+				return false; // let Tiptap handle non-image paste normally
 			},
 		},
 		content: content,

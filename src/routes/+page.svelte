@@ -1,7 +1,6 @@
 <script>
 import "./main.scss";
 import TiptapEditor from "$lib/Tiptap/TiptapEditor.svelte";
-import { onMount } from "svelte";
 import content from "../lib/data/content.html?raw";
 let tiptapEditor = $state(null);
 
