@@ -29,7 +29,8 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
-		}
+		},
+		"./Tiptap/tiptap.scss": "./dist/Tiptap/tiptap.scss"
 	},
 	"peerDependencies": {
 		"sass": "^1.92.1",
