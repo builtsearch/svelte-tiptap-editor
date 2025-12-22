@@ -136,6 +136,38 @@ export class TipTapState {
 		}
 	}
 
+	setImageAttribute(id, key, value) {
+		if (!this.editor) return { error: "Editor not initialized" };
+		if (!id || !key) return { error: "dataId and key are required" };
+
+		const { tr } = this.editor.state;
+		let found = false;
+
+		this.editor.state.doc.descendants((node, pos) => {
+			if (node.type.name === "image" && node.attrs.id === id) {
+				const currentDataAttrs = node.attrs.dataAttributes || {};
+				const newAttrs = {
+					...node.attrs,
+					dataAttributes: {
+						...currentDataAttrs,
+						[key]: value,
+					},
+				};
+				tr.setNodeMarkup(pos, undefined, newAttrs);
+				found = true;
+				return false; // stop iteration
+			}
+		});
+
+		if (found) {
+			this.editor.view.dispatch(tr);
+			return { success: true };
+		} else {
+			console.error(`Image with id "${id}" not found`);
+			return { error: `Image with id "${id}" not found` };
+		}
+	}
+
 	/**
 	 * Replace multiple images in one go
 	 * @param {Array<{ id: string, src: string }>} arr - Array of objects with id and new src

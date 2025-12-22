@@ -11,8 +11,18 @@ function init() {
 
 function test() {
 	const tts = tiptapEditor.getState();
-	const img = tts.getImages();
-	console.log(img);
+	// const img = tts.getImages();
+	// console.log(img);
+
+	//get image key
+	const content = tts.editor.getJSON();
+	const img = content.content.find((node) => {
+		return node.type === "image";
+	});
+	console.log(img.attrs.id);
+
+	tts.setImageAttribute(img.attrs.id, "data-img-key", "hello");
+	console.log(tts.editor.getJSON());
 }
 </script>
 

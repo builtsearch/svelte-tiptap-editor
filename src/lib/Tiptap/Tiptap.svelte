@@ -116,13 +116,28 @@ onMount(async () => {
 				addAttributes() {
 					return {
 						...this.parent?.(),
-
 						class: {
 							default: null,
 							parseHTML: (element) => element.getAttribute("class"),
 							renderHTML: (attributes) => {
 								if (!attributes.class) return {};
 								return { class: attributes.class };
+							},
+						},
+						// Store all data-* attributes dynamically
+						dataAttributes: {
+							default: {},
+							parseHTML: (element) => {
+								const dataAttrs = {};
+								for (const attr of element.attributes) {
+									if (attr.name.startsWith("data-")) {
+										dataAttrs[attr.name] = attr.value;
+									}
+								}
+								return Object.keys(dataAttrs).length > 0 ? dataAttrs : {};
+							},
+							renderHTML: (attributes) => {
+								return attributes.dataAttributes || {};
 							},
 						},
 					};
