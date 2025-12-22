@@ -1,13 +1,14 @@
 <script>
-import { fastRandom } from "$lib/helper.js";
+import { fastRandom, adjustDropdownPosition } from "$lib/helper.js";
 import Icon from "@iconify/svelte";
 import ButtonTooltip from "./ButtonTooltip.svelte";
 import { activeOptions } from "./Toolbar.svelte.js";
-import { onMount } from "svelte";
+import { onMount, tick } from "svelte";
 
 let { editor } = $props();
 let lastSelectedImage = $state(null);
 let showEditor = $state(false);
+let dropdownElement = $state(null);
 
 const tool = {
 	name: "Image",
@@ -51,10 +52,10 @@ function browseImage(e) {
 	input.click();
 }
 
-$effect(() => {
-	if (activeOptions.has(tool.key)) {
-	}
-});
+async function updatePosition() {
+	await tick();
+	adjustDropdownPosition(dropdownElement);
+}
 
 onMount(() => {
 	editor.on("selectionUpdate", () => {
@@ -90,6 +91,7 @@ onMount(() => {
 
 		editImageFields.width = currentWidth;
 		editImageFields.height = currentHeight;
+		updatePosition();
 	}
 });
 function updateImage(dim) {
@@ -101,18 +103,6 @@ function updateImage(dim) {
 			editImageFields.width = Math.round(editImageFields.height * ratio);
 		}
 	}
-
-	const map = {
-		tl: "left top",
-		tc: "center top",
-		tr: "right top",
-		cl: "left center",
-		cc: "center center",
-		cr: "right center",
-		bl: "left bottom",
-		bc: "center bottom",
-		br: "right bottom",
-	};
 
 	const baseClass = `img-pos-${editImageFields.position}`;
 	const classes = [baseClass];
@@ -162,7 +152,6 @@ function reset() {
 	}}
 	onkeydown={(e) => {
 		if (showEditor && e.key === "Escape") {
-			console.log("??");
 			showEditor = false;
 		}
 	}} />
@@ -174,7 +163,7 @@ function reset() {
 	active={activeOptions.has(tool.key)}
 	onclick={browseImage}>
 	{#if showEditor}
-		<div class="tt-toolbar-options tt-shadow-lg">
+		<div class="tt-toolbar-options tt-shadow-lg" bind:this={dropdownElement}>
 			<div class="field">
 				<span class="field-label a1">W</span>
 				<span class="field-label a2">H</span>

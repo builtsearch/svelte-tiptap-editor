@@ -2,7 +2,8 @@
 import Icon from "@iconify/svelte";
 import ButtonTooltip from "./ButtonTooltip.svelte";
 import { activeOptions } from "./Toolbar.svelte.js";
-import { fastRandom } from "$lib/helper.js";
+import { fastRandom, adjustDropdownPosition } from "$lib/helper.js";
+import { tick } from "svelte";
 
 let { button, tools } = $props();
 
@@ -16,15 +17,20 @@ let t = $derived.by(() => {
 });
 let showDropdown = $state(false);
 const id = fastRandom(8, "tt-headings-dropdown-");
+let dropdownElement = $state(null);
 
 function openDropdown() {
 	showDropdown = !showDropdown;
 }
 
-$effect(() => {
+$effect(async () => {
 	showDropdown;
 	if (showDropdown) {
 		document.body.setAttribute("data-scroll-locked", true);
+		await tick();
+		if (dropdownElement) {
+			adjustDropdownPosition(dropdownElement);
+		}
 	} else {
 		document.body.removeAttribute("data-scroll-locked");
 	}
@@ -50,7 +56,7 @@ $effect(() => {
 		<Icon icon="mdi:expand-more" width="12" />
 	</div>
 	{#if showDropdown}
-		<div class="tt-toolbar-options tt-shadow-lg">
+		<div class="tt-toolbar-options tt-shadow-lg" bind:this={dropdownElement}>
 			{#each tools as tool}
 				<button class="tt-button" onclick={() => tool.fn()}>
 					<div class="icon">

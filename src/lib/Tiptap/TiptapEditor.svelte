@@ -3,7 +3,7 @@ import Tiptap from "./Tiptap.svelte";
 import { setTipTapState } from "./TiptapState.svelte.js";
 import Toolbar from "./Toolbar.svelte";
 
-let { onReady = () => {} } = $props();
+let { toolbar = {}, onReady = () => {} } = $props();
 const tts = setTipTapState();
 
 tts.replaceImage();
@@ -14,7 +14,7 @@ export function getState() {
 
 <div class="tiptap-wrapper">
 	<div class="toolbar">
-		<Toolbar />
+		<Toolbar {...toolbar} />
 	</div>
 	<div class="tiptap-content">
 		<Tiptap onReady={() => onReady()} />

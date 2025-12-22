@@ -10,8 +10,13 @@ import LinkEditor from "./LinkEditor.svelte";
 import ToolbarImage from "./ToolbarImage.svelte";
 import { getTipTapState } from "./TiptapState.svelte.js";
 
-// let { editor } = $props();
+let { removeTools = [] } = $props();
 const tts = getTipTapState();
+
+// Helper function to check if a tool should be displayed
+function shouldShowTool(toolKey) {
+	return !removeTools.includes(toolKey);
+}
 
 tts.on("transaction", debounce(updateHandler, 100));
 
@@ -193,6 +198,14 @@ const link = {
 	tooltip: "Link",
 };
 
+const image = {
+	name: "Image",
+	key: "image",
+	type: "image",
+	icon: "lucide:image",
+	tooltip: "Insert Image",
+};
+
 function toggleAlignment(align) {
 	if (tts.editor.isActive({ textAlign: align })) {
 		tts.editor.chain().focus().unsetTextAlign().run();
@@ -200,34 +213,90 @@ function toggleAlignment(align) {
 		tts.editor.chain().focus().setTextAlign(align).run();
 	}
 }
+
+// Derived state that gathers all tools with dividers
+const allTools = $derived.by(() => {
+	const toolGroups = [
+		{ type: "headings", tools: headings },
+		{ type: "nodes", tools: nodes },
+		{ type: "formatting", tools: formatting },
+		{ type: "link", tool: link },
+		{ type: "typography", tools: typography },
+		{ type: "alignment", tools: alignment },
+		{ type: "image", tool: image },
+	];
+
+	const result = [];
+
+	toolGroups.forEach((group, index) => {
+		let hasVisibleTools = false;
+
+		// Handle groups with multiple tools
+		if (group.tools) {
+			// Check if entire group is removed
+			if (shouldShowTool(group.type)) {
+				// Otherwise filter individual tools
+				const visibleTools = group.tools.filter((t) => shouldShowTool(t.key || t.name));
+				if (visibleTools.length > 0) {
+					result.push({ type: group.type, tools: visibleTools });
+					hasVisibleTools = true;
+				}
+			}
+		} else if (group.tool) {
+			if (shouldShowTool(group.tool.key)) {
+				result.push({ type: group.type, tool: group.tool });
+				hasVisibleTools = true;
+			}
+		}
+
+		if (hasVisibleTools && index < toolGroups.length - 1) {
+			// Check if there are more visible tools after this
+			const hasMoreTools = toolGroups.slice(index + 1).some((nextGroup) => {
+				if (nextGroup.tools) {
+					return (
+						shouldShowTool(nextGroup.type) &&
+						nextGroup.tools.some((t) => shouldShowTool(t.key || t.name))
+					);
+				} else if (nextGroup.tool) {
+					return shouldShowTool(nextGroup.tool.key);
+				}
+				return false;
+			});
+
+			if (hasMoreTools) {
+				result.push({ type: "divider-vertical" });
+			}
+		}
+	});
+
+	return result;
+});
 </script>
 
 {#if tts?.editor}
 	<div class="toolbar">
-		<ToolbarItemDropdown tools={headings} />
-		{@render Tools(nodes)}
-		<div class="vertical-divider"></div>
-		{@render Tools(formatting)}
-		<LinkEditor {link} editor={tts.editor} />
-		<div class="vertical-divider"></div>
-		{@render Tools(typography)}
-		<div class="vertical-divider"></div>
-		{@render Tools(alignment)}
-		<div class="vertical-divider"></div>
-		<ToolbarImage editor={tts.editor} />
+		{#each allTools as item}
+			{#if item.type === "headings"}
+				<ToolbarItemDropdown tools={item.tools} />
+			{:else if item.tools}
+				{#each item.tools as t}
+					<ButtonTooltip
+						icon={t.icon}
+						active={activeOptions.has(t.key || t.name)}
+						tooltip={t.tooltip ?? t.name}
+						kbd={t.kbd}
+						onclick={() => t.fn()} />
+				{/each}
+			{:else if item.type === "link"}
+				<LinkEditor link={item.tool} editor={tts.editor} />
+			{:else if item.type === "image"}
+				<ToolbarImage editor={tts.editor} />
+			{:else if item.type === "divider-vertical"}
+				<div class="vertical-divider"></div>
+			{/if}
+		{/each}
 	</div>
 {/if}
-
-{#snippet Tools(tools)}
-	{#each tools as t}
-		<ButtonTooltip
-			icon={t.icon}
-			active={activeOptions.has(t.key || t.name)}
-			tooltip={t.tooltip ?? t.name}
-			kbd={t.kbd}
-			onclick={() => t.fn()} />
-	{/each}
-{/snippet}
 
 <style lang="scss">
 .toolbar {
@@ -235,5 +304,11 @@ function toggleAlignment(align) {
 	justify-content: center;
 	padding-block: 0.5rem;
 	gap: 0.25rem;
+	align-items: center;
+}
+
+.vertical-divider {
+	width: 1px;
+	height: 1.5rem;
 }
 </style>

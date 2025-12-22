@@ -3,12 +3,14 @@ import Icon from "@iconify/svelte";
 import ButtonTooltip from "./ButtonTooltip.svelte";
 import { onMount, tick } from "svelte";
 import { activeOptions } from "./Toolbar.svelte.js";
+import { adjustDropdownPosition } from "$lib/helper.js";
 
 let { link, editor } = $props();
 let showEditor = $state(false);
 let url = $state("");
 let input = $state(null);
 let lastUrl = $state("");
+let dropdownElement = $state(null);
 
 async function showLinkEditor(e) {
 	if (e.target.closest(".link-editor")) {
@@ -78,6 +80,9 @@ $effect(async () => {
 			input.focus();
 			input.setSelectionRange(input.value.length, input.value.length);
 		}
+		if (dropdownElement) {
+			adjustDropdownPosition(dropdownElement);
+		}
 	}
 });
 </script>
@@ -89,7 +94,7 @@ $effect(async () => {
 	tooltip={link.tooltip}
 	active={activeOptions.has(link.key)}>
 	{#if showEditor}
-		<div class="link-editor tt-shadow-lg">
+		<div class="link-editor tt-shadow-lg" bind:this={dropdownElement}>
 			<input
 				type="text"
 				placeholder="Paste a link..."

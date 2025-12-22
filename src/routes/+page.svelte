@@ -18,7 +18,12 @@ function test() {
 
 <button onclick={test}>test</button>
 <main>
-	<TiptapEditor onReady={() => init()} bind:this={tiptapEditor} />
+	<TiptapEditor
+		toolbar={{
+			removeTools: [],
+		}}
+		onReady={() => init()}
+		bind:this={tiptapEditor} />
 </main>
 
 <style lang="scss">

@@ -36,3 +36,67 @@ export function fastRandom(length = 8, prefix = "") {
 			.substring(2, 2 + length)
 	);
 }
+
+/**
+ * Adjusts the position of a dropdown element to prevent overflow.
+ * Shifts the element horizontally if it overflows the viewport.
+ *
+ * @param {HTMLElement} element - The dropdown element to adjust
+ */
+export function adjustDropdownPosition(element) {
+	if (!element) return;
+
+	const rect = element.getBoundingClientRect();
+	const viewportWidth = window.innerWidth;
+
+	// Check if element overflows on the right
+	if (rect.right > viewportWidth) {
+		const overflow = rect.right - viewportWidth;
+		const currentTransform = element.style.transform || "";
+
+		// Extract current translateX value or default to -50%
+		let currentX = -50;
+		const translateMatch = currentTransform.match(/translateX\((-?\d+(?:\.\d+)?%?)/);
+		if (translateMatch) {
+			const value = translateMatch[1];
+			if (value.includes("%")) {
+				currentX = parseFloat(value);
+			} else {
+				// If it's already in pixels, convert back to percentage
+				currentX = (parseFloat(value) / rect.width) * 100;
+			}
+		}
+
+		// Calculate adjustment needed in percentage
+		const adjustmentPx = overflow + 24; // 8px gap from edge
+		const adjustmentPercent = (adjustmentPx / rect.width) * 100;
+		const newX = currentX - adjustmentPercent;
+
+		element.style.transform = `translateX(${newX}%)`;
+	}
+
+	// Check if element overflows on the left
+	if (rect.left < 0) {
+		const overflow = Math.abs(rect.left);
+		const currentTransform = element.style.transform || "";
+
+		// Extract current translateX value or default to -50%
+		let currentX = -50;
+		const translateMatch = currentTransform.match(/translateX\((-?\d+(?:\.\d+)?%?)/);
+		if (translateMatch) {
+			const value = translateMatch[1];
+			if (value.includes("%")) {
+				currentX = parseFloat(value);
+			} else {
+				currentX = (parseFloat(value) / rect.width) * 100;
+			}
+		}
+
+		// Calculate adjustment needed in percentage
+		const adjustmentPx = overflow + 8; // 8px gap from edge
+		const adjustmentPercent = (adjustmentPx / rect.width) * 100;
+		const newX = currentX + adjustmentPercent;
+
+		element.style.transform = `translateX(${newX}%)`;
+	}
+}
