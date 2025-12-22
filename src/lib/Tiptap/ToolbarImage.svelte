@@ -6,7 +6,6 @@ import { activeOptions } from "./Toolbar.svelte.js";
 import { onMount, tick } from "svelte";
 
 let { editor } = $props();
-let lastSelectedImage = $state(null);
 let showEditor = $state(false);
 let dropdownElement = $state(null);
 
@@ -134,20 +133,8 @@ function reset() {
 <svelte:window
 	onclick={(e) => {
 		const target = e.target;
-		if (e.target.closest(".tt-toolbar-options")) {
+		if (target.closest(".tt-toolbar-options")) {
 			return;
-		}
-
-		if (!target.closest("img")) {
-			lastSelectedImage = null;
-			showEditor = false;
-			return;
-		}
-		if (target == lastSelectedImage) {
-			showEditor = false;
-		} else {
-			showEditor = true;
-			lastSelectedImage = target;
 		}
 	}}
 	onkeydown={(e) => {
